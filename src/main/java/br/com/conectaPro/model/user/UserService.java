@@ -12,12 +12,19 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UserService {
+
+  private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
+  public static final String AVISO_SEM_COORDENADA =
+      "Endereço salvo, mas não foi possível localizá-lo no mapa. Revise rua, bairro, cidade, estado e CEP.";
 
   private final UserRepository userRepository;
   private final AddressUserRepository addressUserRepository;
@@ -62,15 +69,7 @@ public class UserService {
 
     // Instancia e salva o Address vinculado ao User
     AddressUser addressUser = userRequest.getAddress().build();
-    try {
-      CoordinatesDTO coords = geoLocationService.getCoordinates(addressUser);
-      addressUser.setLatitude(Double.parseDouble(coords.getLat()));
-      addressUser.setLongitude(Double.parseDouble(coords.getLon()));
-      System.out.println("LAT: " + addressUser.getLatitude());
-      System.out.println("LNG: " + addressUser.getLongitude());
-    } catch (Exception e) {
-      System.out.println("ERRO GEOLOCALIZACAO: " + e.getMessage());
-    }
+    geocodificar(addressUser, "userId=" + savedUser.getId());
 
     addressUser.setUserId(savedUser);
     addressUser.setEnabled(Boolean.TRUE);
@@ -79,8 +78,35 @@ public class UserService {
     List<AddressUser> addresses = new ArrayList<>();
     addresses.add(addressUser);
     savedUser.setAdresses(addresses);
+    savedUser.setGeocodingWarning(addressUser.getGeocodingWarning());
 
     return savedUser;
+  }
+
+  /**
+   * Preenche latitude/longitude do endereço. Se não for possível (ou o resultado não passar na
+   * validação), o endereço é salvo SEM coordenada — ele fica fora da busca por raio — mas a falha é
+   * registrada no log e devolvida como aviso na resposta da API.
+   */
+  private void geocodificar(AddressUser address, String contexto) {
+    try {
+      CoordinatesDTO coords = geoLocationService.getCoordinates(address);
+      address.setLatitude(Double.parseDouble(coords.getLat()));
+      address.setLongitude(Double.parseDouble(coords.getLon()));
+      address.setGeocodingWarning(null);
+    } catch (Exception e) {
+      address.setLatitude(null);
+      address.setLongitude(null);
+      address.setGeocodingWarning(AVISO_SEM_COORDENADA);
+      log.warn(
+          "Endereço sem coordenada ({}, bairro={}, cidade={}/{}, cep={}): {}",
+          contexto,
+          address.getNeighborhood(),
+          address.getCity(),
+          address.getState(),
+          address.getZipCode(),
+          e.getMessage());
+    }
   }
 
   private void validateProfessionalCategories(UserType userType, List<Long> categoryIds) {
@@ -252,13 +278,7 @@ public class UserService {
   public AddressUser postAddressUser(Long userId, AddressUser address) {
     User user = this.getById(userId);
 
-    try {
-      CoordinatesDTO coords = geoLocationService.getCoordinates(address);
-      address.setLatitude(Double.parseDouble(coords.getLat()));
-      address.setLongitude(Double.parseDouble(coords.getLon()));
-    } catch (Exception e) {
-      System.out.println("ERRO GEOLOCALIZACAO: " + e.getMessage());
-    }
+    geocodificar(address, "userId=" + userId);
 
     address.setUserId(user);
     address.setEnabled(Boolean.TRUE);
@@ -293,16 +313,9 @@ public class UserService {
 
     // Igual ao cadastro: se o geocoding falhar, não derruba a edição. As coordenadas antigas não
     // valem mais para o endereço novo, então são limpas (o endereço fica fora da busca por raio).
-    try {
-      CoordinatesDTO coords = geoLocationService.getCoordinates(address);
-      address.setLatitude(Double.valueOf(coords.getLat()));
-      address.setLongitude(Double.valueOf(coords.getLon()));
-    } catch (Exception e) {
-      System.out.println("ERRO GEOLOCALIZACAO: " + e.getMessage());
-      address.setLatitude(null);
-      address.setLongitude(null);
-    }
+    geocodificar(address, "addressId=" + id);
 
+    // address já é a instância gerenciada: o aviso (campo @Transient) segue na resposta
     return addressUserRepository.save(address);
   }
 

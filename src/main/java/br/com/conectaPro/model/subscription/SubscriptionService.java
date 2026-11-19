@@ -53,8 +53,11 @@ public class SubscriptionService {
         .ifPresent(
             ativa -> {
               throw new IllegalStateException(
-                  "Você já possui o plano " + plan.getName() + " ativo até "
-                      + ativa.getExpiresAt().toLocalDate() + ".");
+                  "Você já possui o plano "
+                      + plan.getName()
+                      + " ativo até "
+                      + ativa.getExpiresAt().toLocalDate()
+                      + ".");
             });
 
     Subscription subscription =

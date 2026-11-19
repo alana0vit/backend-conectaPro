@@ -2,10 +2,12 @@ package br.com.conectaPro.model.user;
 
 import br.com.conectaPro.util.entity.AudibleEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,6 +42,11 @@ public class AddressUser extends AudibleEntity {
   @Column private Double latitude;
 
   @Column private Double longitude;
+
+  /** Não vai para o banco: aviso na resposta quando o endereço não pôde ser localizado. */
+  @Transient
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private String geocodingWarning;
 
   @Column private String supplement;
 }

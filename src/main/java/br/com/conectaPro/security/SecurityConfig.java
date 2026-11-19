@@ -94,7 +94,10 @@ public class SecurityConfig {
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     List<String> origins = new ArrayList<>();
-    origins.add(frontendUrl.endsWith("/") ? frontendUrl.substring(0, frontendUrl.length() - 1) : frontendUrl);
+    origins.add(
+        frontendUrl.endsWith("/")
+            ? frontendUrl.substring(0, frontendUrl.length() - 1)
+            : frontendUrl);
     Arrays.stream(extraOrigins.split(","))
         .map(String::trim)
         .filter(o -> !o.isEmpty())

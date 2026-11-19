@@ -55,9 +55,7 @@ public class PaymentController {
       String checkoutUrl = paymentService.getCheckoutUrl(payment);
 
       return ResponseEntity.ok(
-          Map.of(
-              "payment", PaymentResponseDTO.fromEntity(payment),
-              "checkoutUrl", checkoutUrl));
+          Map.of("payment", PaymentResponseDTO.fromEntity(payment), "checkoutUrl", checkoutUrl));
     } catch (NoSuchElementException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     } catch (IllegalStateException e) {

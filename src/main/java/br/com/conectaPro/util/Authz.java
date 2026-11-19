@@ -4,8 +4,8 @@ import br.com.conectaPro.security.CustomUserDetails;
 import java.util.NoSuchElementException;
 
 /**
- * Checagens de "dono" usadas pelos controllers. Quando o usuário logado não é o dono, responde
- * "não encontrado" (404 via GlobalExceptionHandler) para não revelar que o recurso existe.
+ * Checagens de "dono" usadas pelos controllers. Quando o usuário logado não é o dono, responde "não
+ * encontrado" (404 via GlobalExceptionHandler) para não revelar que o recurso existe.
  */
 public final class Authz {
 

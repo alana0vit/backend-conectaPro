@@ -56,7 +56,8 @@ public class RatingController {
       User evaluator = userService.getById(request.getEvaluatingPerson());
       User evaluated = userService.getById(request.getPersonEvaluated());
       // só quem participa da demanda avalia (404 para estranhos)
-      Demand service = demandService.getByIdForUser(request.getService(), principal.getUser().getId());
+      Demand service =
+          demandService.getByIdForUser(request.getService(), principal.getUser().getId());
 
       Rating ratingNew = request.build();
       ratingNew.setService(service);

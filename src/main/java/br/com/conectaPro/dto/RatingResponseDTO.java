@@ -6,8 +6,8 @@ import java.util.List;
 
 /**
  * Avaliação sem dados pessoais. Em avaliações anônimas o avaliador só aparece para ele mesmo; para
- * os demais, {@code evaluatingPerson} vem nulo (o front já mostra "Anônimo" quando
- * {@code anonymous = true}).
+ * os demais, {@code evaluatingPerson} vem nulo (o front já mostra "Anônimo" quando {@code anonymous
+ * = true}).
  */
 public record RatingResponseDTO(
     Long id,

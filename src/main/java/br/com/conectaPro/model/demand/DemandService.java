@@ -71,8 +71,8 @@ public class DemandService {
   public static final int MAX_IMAGES = 5;
 
   /**
-   * Demanda só para o dono (cliente que a criou). Para quem não é o dono, responde "não
-   * encontrada" (404), como o getByIdForUser, sem revelar que o recurso existe.
+   * Demanda só para o dono (cliente que a criou). Para quem não é o dono, responde "não encontrada"
+   * (404), como o getByIdForUser, sem revelar que o recurso existe.
    */
   public Demand getByIdForOwner(@NonNull Long id, Long userId) {
     Demand demand = getById(id);

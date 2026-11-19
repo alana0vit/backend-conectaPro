@@ -3,6 +3,7 @@ package br.com.conectaPro.model.user;
 import br.com.conectaPro.model.category.Category;
 import br.com.conectaPro.util.entity.AudibleEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,6 +14,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -63,6 +65,11 @@ public class User extends AudibleEntity {
   private String recoveryToken; // usado só no fluxo de "esqueci minha senha", nunca em resposta
 
   @JsonIgnore @Column private LocalDateTime recoveryTokenExpiration;
+
+  /** Só na resposta do cadastro: avisa quando o endereço não pôde ser localizado no mapa. */
+  @Transient
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private String geocodingWarning;
 
   @JsonIgnore
   @OneToMany(mappedBy = "userId", orphanRemoval = true, fetch = FetchType.EAGER)

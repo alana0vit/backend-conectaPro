@@ -5,10 +5,10 @@ import br.com.conectaPro.model.payment.PaymentService;
 import br.com.conectaPro.model.subscription.Subscription;
 import br.com.conectaPro.model.subscription.SubscriptionPlan;
 import br.com.conectaPro.model.subscription.SubscriptionService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import br.com.conectaPro.security.CustomUserDetails;
 import br.com.conectaPro.util.Authz;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -71,7 +71,8 @@ public class SubscriptionController {
 
   @Operation(
       summary = "Plano atual do profissional",
-      description = "200 com {subscriptionId, planId, planName, status, startedAt, expiresAt} ou 204.")
+      description =
+          "200 com {subscriptionId, planId, planName, status, startedAt, expiresAt} ou 204.")
   @GetMapping("/professional/{professionalId}/current")
   public ResponseEntity<?> planoAtual(
       @PathVariable Long professionalId, @AuthenticationPrincipal CustomUserDetails principal) {
