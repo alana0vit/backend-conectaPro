@@ -118,6 +118,21 @@ public class RatingService {
     return repository.save(rating);
   }
 
+  /** Só o avaliador (autor) preenche a própria avaliação. Outros: 404. */
+  @Transactional
+  public void finishForUser(Long id, Long userId, FinishRatingDTO request) {
+    Rating rating =
+        repository
+            .findById(id)
+            .orElseThrow(() -> new NoSuchElementException("Avaliação não encontrada."));
+    if (userId == null
+        || rating.getEvaluatingPerson() == null
+        || !userId.equals(rating.getEvaluatingPerson().getId())) {
+      throw new NoSuchElementException("Avaliação não encontrada.");
+    }
+    finish(id, request);
+  }
+
   @Transactional
   public void finish(Long id, FinishRatingDTO request) {
     Rating rating =

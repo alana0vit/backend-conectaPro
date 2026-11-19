@@ -53,7 +53,9 @@ class KnowledgeBaseTest {
         "o que significa aguardando pagamento|status-pedido",
         "meu pagamento foi recusado|cancelamento-problemas",
         "minha assinatura venceu|como-assinar",
-        "mostrar profissionais próximos no mapa|busca-mapa"
+        "mostrar profissionais próximos no mapa|busca-mapa",
+        "tem garantia?|garantia-servico",
+        "e se o serviço ficar mal feito|garantia-servico"
       })
   void achaOGuiaCerto(String pergunta, String idEsperado) {
     List<KnowledgeIndex.Hit> hits = kb.search(pergunta, 3);

@@ -2,7 +2,7 @@ version: "3"
 services:
 
   db:
-    image: postgres:9.6
+    image: postgres:16
     restart: always
     environment:
       POSTGRES_PASSWORD: ${PASS_DB}
@@ -10,4 +10,4 @@ services:
     ports:
       - ${PORT_DB}:5432
     volumes:
-      - ./postgres-data:/bitnami/postgresql/data
+      - ./postgres-data:/var/lib/postgresql/data
